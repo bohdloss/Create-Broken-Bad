@@ -58,6 +58,7 @@
   "brass_call_bell_tooltip": "§8Ding!",
   "ephedra_tooltip": "§8Buy it from farmers.",
 
+  "effect.createbb.addiction": "Addiction",
 
   "itemGroup.CreateBB": "Create: Broken Bad"
 }
