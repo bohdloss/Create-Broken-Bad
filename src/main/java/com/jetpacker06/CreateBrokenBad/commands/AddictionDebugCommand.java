@@ -5,28 +5,38 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 public class AddictionDebugCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("addiction")
-                .then(Commands.literal("show").executes(AddictionDebugCommand::show))
-                .then(Commands.literal("clear").executes(AddictionDebugCommand::clear))
+                .then(Commands.literal("show")
+                        .requires(c -> c.hasPermission(2))
+                        .executes(AddictionDebugCommand::show))
+                .then(Commands.literal("clear")
+                        .requires(c -> c.hasPermission(2))
+                        .executes(AddictionDebugCommand::clear))
                 .then(Commands.literal("set")
                         .then(Commands.literal("addiction")
                                 .then(Commands.argument("value", FloatArgumentType.floatArg())
+                                        .requires(c -> c.hasPermission(2))
                                         .executes(AddictionDebugCommand::setAddiction)))
                         .then(Commands.literal("withdrawal")
                                 .then(Commands.argument("value", FloatArgumentType.floatArg())
+                                        .requires(c -> c.hasPermission(2))
                                         .executes(AddictionDebugCommand::setWithdrawal)))
                         .then(Commands.literal("tolerance")
                                 .then(Commands.argument("value", FloatArgumentType.floatArg())
+                                        .requires(c -> c.hasPermission(2))
                                         .executes(AddictionDebugCommand::setTolerance)))
                         .then(Commands.literal("toxicity")
                                 .then(Commands.argument("value", FloatArgumentType.floatArg())
+                                        .requires(c -> c.hasPermission(2))
                                         .executes(AddictionDebugCommand::setToxicity)))
                 )
         );
@@ -35,19 +45,12 @@ public class AddictionDebugCommand {
     private static int show(CommandContext<CommandSourceStack> context) {
         try {
             ServerPlayer player = (ServerPlayer) context.getSource().getEntity();
-
             player.getCapability(CBBCapabilities.PLAYER_ADDICTION).ifPresent(addiction -> {
-                context.getSource().sendSuccess(Component.nullToEmpty(
-                        ChatFormatting.BLUE + "Addiction data: \n" +
-                                ChatFormatting.GREEN + "Addiction: " +
-                                ChatFormatting.YELLOW + addiction.addiction + "\n" +
-                                ChatFormatting.GREEN + "Withdrawal: " +
-                                ChatFormatting.YELLOW + addiction.withdrawal + "\n" +
-                                ChatFormatting.GREEN + "Tolerance: " +
-                                ChatFormatting.YELLOW + addiction.tolerance + "\n" +
-                                ChatFormatting.GREEN + "Toxicity: " +
-                                ChatFormatting.YELLOW + addiction.toxicity
-                ), true);
+                player.sendMessage(new TranslatableComponent("commands.createbb.addiction.show",
+                        "" + ChatFormatting.YELLOW +addiction.addiction,
+                        "" + ChatFormatting.YELLOW + addiction.withdrawal,
+                        "" + ChatFormatting.YELLOW + addiction.tolerance,
+                        "" + ChatFormatting.YELLOW + addiction.toxicity), ChatType.GAME_INFO, Util.NIL_UUID);
             });
 
             return 1;
@@ -62,8 +65,7 @@ public class AddictionDebugCommand {
 
             player.getCapability(CBBCapabilities.PLAYER_ADDICTION).ifPresent(addiction -> {
                 addiction.reset();
-                context.getSource().sendSuccess(Component.nullToEmpty(
-                        ChatFormatting.BLUE + "Addiction was removed"), true);
+                player.sendMessage(new TranslatableComponent("commands.createbb.addiction.clear"), ChatType.GAME_INFO, Util.NIL_UUID);
             });
 
             return 1;
@@ -76,13 +78,9 @@ public class AddictionDebugCommand {
         try {
             ServerPlayer player = (ServerPlayer) context.getSource().getEntity();
             float value = FloatArgumentType.getFloat(context, "value");
-
             player.getCapability(CBBCapabilities.PLAYER_ADDICTION).ifPresent(addiction -> {
                 addiction.addiction = value;
-                context.getSource().sendSuccess(Component.nullToEmpty(
-                        ChatFormatting.BLUE + "Addiction set to: " +
-                                ChatFormatting.YELLOW + value
-                ), true);
+                player.sendMessage(new TranslatableComponent("commands.createbb.addiction.set_addiction", "" + ChatFormatting.YELLOW + value), ChatType.GAME_INFO, Util.NIL_UUID);
             });
 
             return 1;
@@ -95,13 +93,9 @@ public class AddictionDebugCommand {
         try {
             ServerPlayer player = (ServerPlayer) context.getSource().getEntity();
             float value = FloatArgumentType.getFloat(context, "value");
-
             player.getCapability(CBBCapabilities.PLAYER_ADDICTION).ifPresent(addiction -> {
                 addiction.withdrawal = value;
-                context.getSource().sendSuccess(Component.nullToEmpty(
-                        ChatFormatting.BLUE + "Withdrawal set to: " +
-                                ChatFormatting.YELLOW + value
-                ), true);
+                player.sendMessage(new TranslatableComponent("commands.createbb.addiction.set_withdrawal", "" + ChatFormatting.YELLOW + value), ChatType.GAME_INFO, Util.NIL_UUID);
             });
 
             return 1;
@@ -114,13 +108,9 @@ public class AddictionDebugCommand {
         try {
             ServerPlayer player = (ServerPlayer) context.getSource().getEntity();
             float value = FloatArgumentType.getFloat(context, "value");
-
             player.getCapability(CBBCapabilities.PLAYER_ADDICTION).ifPresent(addiction -> {
                 addiction.tolerance = value;
-                context.getSource().sendSuccess(Component.nullToEmpty(
-                        ChatFormatting.BLUE + "Tolerance set to: " +
-                                ChatFormatting.YELLOW + value
-                ), true);
+                player.sendMessage(new TranslatableComponent("commands.createbb.addiction.set_tolerance", "" + ChatFormatting.YELLOW + value), ChatType.GAME_INFO, Util.NIL_UUID);
             });
 
             return 1;
@@ -133,13 +123,9 @@ public class AddictionDebugCommand {
         try {
             ServerPlayer player = (ServerPlayer) context.getSource().getEntity();
             float value = FloatArgumentType.getFloat(context, "value");
-
             player.getCapability(CBBCapabilities.PLAYER_ADDICTION).ifPresent(addiction -> {
                 addiction.toxicity = value;
-                context.getSource().sendSuccess(Component.nullToEmpty(
-                        ChatFormatting.BLUE + "Toxicity set to: " +
-                                ChatFormatting.YELLOW + value
-                ), true);
+                player.sendMessage(new TranslatableComponent("commands.createbb.addiction.set_toxicity", "" + ChatFormatting.YELLOW + value), ChatType.GAME_INFO, Util.NIL_UUID);
             });
 
             return 1;
