@@ -70,6 +70,7 @@ public class CBBItems {
                 .register();
         WHITE_METH = REGISTRATE.item("white_meth", MethItem.White::new)
                 //.lang("White Meth")
+                .properties(x -> new Item.Properties().food(new FoodProperties.Builder().fast().alwaysEat().nutrition(0).build()))
                 .register();
 
         CRUSHED_COPPER = REGISTRATE.item("crushed_copper", Item::new)
@@ -103,6 +104,7 @@ public class CBBItems {
                 .register();
         BLUE_METH = REGISTRATE.item("blue_meth", MethItem.Blue::new)
                 //.lang("Blue Meth")
+                .properties(x -> new Item.Properties().food(new FoodProperties.Builder().fast().alwaysEat().nutrition(0).build()))
                 .register();
     }
 }

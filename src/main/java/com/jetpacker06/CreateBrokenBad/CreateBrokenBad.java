@@ -20,7 +20,7 @@ public class CreateBrokenBad {
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         AllSoundEvents.register(eventBus);
-
+        CBBEffects.register(eventBus);
         CBBItems.register(registrate);
         CBBBlocks.register(registrate);
         CBBFluids.register(registrate);
